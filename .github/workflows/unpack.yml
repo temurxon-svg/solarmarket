@@ -1,5 +1,6 @@
 name: Unpack bundle
 on:
+  workflow_dispatch:
   push:
     paths: ["bundle.zip"]
 permissions:
