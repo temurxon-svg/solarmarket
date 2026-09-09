@@ -1,0 +1,24 @@
+name: Unpack bundle
+on:
+  push:
+    paths: ["bundle.zip"]
+permissions:
+  contents: write
+jobs:
+  unpack:
+    if: github.event_head_commit.author.name != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Unpack bundle.zip into repo
+        run: |
+          test -f bundle.zip || exit 0
+          unzip -o -q bundle.zip -d /tmp/bundle
+          rm -f bundle.zip
+          rm -rf src public supabase
+          cp -R /tmp/bundle/. .
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Unpack bundle" || echo "nothing to commit"
+          git push
